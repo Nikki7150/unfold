@@ -16,9 +16,10 @@ export default function TabLayout() {
     const webUrl = shareIntent?.webUrl;
 
     if (hasShareIntent && webUrl) {
-      getArticleTitle(webUrl).then((title) =>
-        console.log('TITLE: ', title)
-      );
+      getArticleTitle(webUrl).then((result) => {
+        console.log('TITLE: ', result.title);
+        console.log('URL: ', result.url);
+      });
     }
   }, [hasShareIntent, shareIntent]);
 
