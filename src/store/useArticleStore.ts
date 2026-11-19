@@ -8,6 +8,7 @@ type ArticleState = {
     articles: Article[];
     addArticle: (input: { title: string; url: string }) => Article | null;
     hasUrl: (url: string) => boolean;
+    markAsRead: (id: string, note?: string) => void;
 };
 
 export const useArticleStore = create<ArticleState>()(
@@ -37,6 +38,16 @@ export const useArticleStore = create<ArticleState>()(
                     articles: [...state.articles, newArticle],
                 }));
                 return newArticle;
+            },
+            markAsRead: (id: string, note?: string) => {
+                const cleanNote = note?.trim() ? note.trim() : null;
+                set((state) => ({
+                    articles: state.articles.map((article) =>
+                        article.id === id
+                            ? { ...article, dateRead: new Date().toISOString(), note: cleanNote }
+                            : article
+                    ),
+                }));
             },
         }),
         {

@@ -1,25 +1,61 @@
-import { FlatList, Text, View, StyleSheet } from 'react-native';
+import { FlatList, Text, View, StyleSheet, Alert, Pressable } from 'react-native';
 import { useArticleStore } from '@/store/useArticleStore';
+import { formatDistanceToNow} from 'date-fns';
+import * as WebBrowser from 'expo-web-browser';
+import { Article } from '@/types/article';
 
 import { MaxContentWidth, Spacing } from '@/constants/theme';
 
 export default function LibraryScreen() {
   const articles = useArticleStore((s) => s.articles);
+  const markAsRead = useArticleStore((s) => s.markAsRead);
 
-  // TODO 1: make a list sorted newest first (by dateAdded)
+  const sortedArticles = [...articles].sort((a, b) => 
+    b.dateAdded.localeCompare(a.dateAdded)
+  );
+
+  async function openArticle(article: Article) {
+    await WebBrowser.openBrowserAsync(article.url);
+    Alert.prompt(
+      'Finished this one?',
+      'Your notes (Optional): ',
+      [
+        {
+          text: 'Not yet',
+          onPress: () => console.log('cancelled'),
+          style: 'cancel'
+        },
+        {
+          text: 'Mark As Read',
+          onPress: (note?: string) => markAsRead(article.id, note)
+        },
+      ],
+    );
+  };
 
   return (
     <View style={{ flex: 1, paddingTop: 60 }}>
       <FlatList
-        data={/* your sorted list */ articles}
+        data={sortedArticles}
         keyExtractor={(item) => item.id}
         renderItem={({ item }) => (
-          <View style={{ padding: 16 }}>
-            {/* TODO 2: show the title, and under it something like "Added 2 days ago" */}
-          </View>
+          <Pressable onPress={() => openArticle(item)}>
+            <View style={{ padding: 16 }}>
+              <Text style={{ fontSize: 16, fontWeight: '600' }}>{item.title}</Text>
+              <Text style={{ color: '#666', marginTop: 4 }}>
+                Added {formatDistanceToNow(new Date(item.dateAdded), { addSuffix: true })}
+              </Text>
+              {item.dateRead && (
+                <Text>Read</Text>
+              )}
+              {item.note && (
+                <Text>{item.note}</Text>
+              )}
+            </View>
+          </Pressable>
         )}
         ListEmptyComponent={
-          <Text>Nothing Saved Yet. Share some Substack articles!</Text>
+          <Text>Nothing saved yet. Share some Substack articles!</Text>
         }
       />
     </View>
