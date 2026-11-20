@@ -9,6 +9,7 @@ type ArticleState = {
     addArticle: (input: { title: string; url: string }) => Article | null;
     hasUrl: (url: string) => boolean;
     markAsRead: (id: string, note?: string) => void;
+    setPicked: (id: string) => void;
 };
 
 export const useArticleStore = create<ArticleState>()(
@@ -49,6 +50,14 @@ export const useArticleStore = create<ArticleState>()(
                     ),
                 }));
             },
+            setPicked: (id: string) => 
+                set((state) => ({
+                    articles: state.articles.map((article) => 
+                        article.id === id
+                        ? { ...article, datePicked: new Date().toISOString() }
+                        : article
+                    ),
+                })),
         }),
         {
             name: 'unfold-articles',
