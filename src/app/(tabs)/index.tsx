@@ -32,10 +32,9 @@ export default function HomeScreen() {
         </Pressable>
       </>
     );
-  } // else if (readToday) {
-  //   content = <Text>You've read today's article. See you tomorrow!</Text>;
-  // } 
-    else if (!hasUnread) {
+  } else if (readToday) {
+    content = <Text>You've read today's article. See you tomorrow!</Text>;
+  } else if (!hasUnread) {
     if (articles.length !== 0) {
       content = <Text>Nothing saved yet</Text>;
     } else {
