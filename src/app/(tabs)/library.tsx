@@ -5,33 +5,16 @@ import * as WebBrowser from 'expo-web-browser';
 import { Article } from '@/types/article';
 
 import { MaxContentWidth, Spacing } from '@/constants/theme';
+import { useOpenArticle } from '@/hooks/useOpenArticle';
 
 export default function LibraryScreen() {
   const articles = useArticleStore((s) => s.articles);
   const markAsRead = useArticleStore((s) => s.markAsRead);
+  const openArticle = useOpenArticle();
 
   const sortedArticles = [...articles].sort((a, b) => 
     b.dateAdded.localeCompare(a.dateAdded)
   );
-
-  async function openArticle(article: Article) {
-    await WebBrowser.openBrowserAsync(article.url);
-    Alert.prompt(
-      'Finished this one?',
-      'Your notes (Optional): ',
-      [
-        {
-          text: 'Not yet',
-          onPress: () => console.log('cancelled'),
-          style: 'cancel'
-        },
-        {
-          text: 'Mark As Read',
-          onPress: (note?: string) => markAsRead(article.id, note)
-        },
-      ],
-    );
-  };
 
   return (
     <View style={{ flex: 1, paddingTop: 60 }}>
