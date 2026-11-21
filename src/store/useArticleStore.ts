@@ -6,7 +6,7 @@ import { Article } from '@/types/article';
 
 type ArticleState = {
     articles: Article[];
-    addArticle: (input: { title: string; url: string }) => Article | null;
+    addArticle: (input: { title: string; url: string; imageUrl: string | null }) => Article | null;
     hasUrl: (url: string) => boolean;
     markAsRead: (id: string, note?: string) => void;
     setPicked: (id: string) => void;
@@ -22,7 +22,7 @@ export const useArticleStore = create<ArticleState>()(
                     (article) => article.url.trim().toLowerCase() === normalized
                 );
             },
-            addArticle: ({ title, url }: { title: string; url: string }) => {
+            addArticle: ({ title, url, imageUrl }: { title: string; url: string; imageUrl: string | null }) => {
                 if (get().hasUrl(url)) {
                     return null;
                 }
@@ -34,6 +34,7 @@ export const useArticleStore = create<ArticleState>()(
                     dateRead: null,
                     datePicked: null,
                     note: null,
+                    imageUrl,
                 };
                 set((state) => ({
                     articles: [...state.articles, newArticle],

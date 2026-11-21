@@ -6,4 +6,5 @@ export type Article = {
     dateRead: string | null;
     datePicked: string | null;
     note: string | null;
+    imageUrl: string | null;
 }

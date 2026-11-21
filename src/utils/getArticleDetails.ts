@@ -43,7 +43,7 @@ function findRedirectTarget(html: string): string | null {
     return js ? js[1] : null;
 }
 
-export async function getArticleTitle(url: string, hopsLeft = 1): Promise<{title: string | null; url: string }> {
+export async function getArticleDetails(url: string, hopsLeft = 1): Promise<{title: string | null; url: string; imageUrl: string | null; }> {
     const clean = cleanUrl(url);
     try {
         const response = await fetch(clean, {
@@ -57,16 +57,18 @@ export async function getArticleTitle(url: string, hopsLeft = 1): Promise<{title
             const finalUrl = cleanUrl(response.url || clean);
             const redirect = findRedirectTarget(html);
             if (redirect && hopsLeft > 0) {
-                return await getArticleTitle(decodeEntities(redirect), hopsLeft - 1);
+                return await getArticleDetails(decodeEntities(redirect), hopsLeft - 1);
             }
+            const ogImage = getMetaContent(html, 'og:image');
+            const imageUrl = ogImage ? decodeEntities(ogImage) : null;
             const ogTitle = getMetaContent(html, 'og:title');
-            if (ogTitle && isUsableTitle(decodeEntities(ogTitle))) return { title: decodeEntities(ogTitle), url: finalUrl };
+            if (ogTitle && isUsableTitle(decodeEntities(ogTitle))) return { title: decodeEntities(ogTitle), url: finalUrl, imageUrl };
             const titleTag = html.match(/<title[^>]*>([\s\S]*?)<\/title>/i);
-            if (titleTag?.[1] && isUsableTitle(decodeEntities(titleTag[1]))) return { title: decodeEntities(titleTag[1]), url: finalUrl };
+            if (titleTag?.[1] && isUsableTitle(decodeEntities(titleTag[1]))) return { title: decodeEntities(titleTag[1]), url: finalUrl, imageUrl };
         }
     } catch {
         // network error: fall through to the slug fallback
     }
 
-    return { title: titleFromSlug(clean), url: clean };
+    return { title: titleFromSlug(clean), url: clean, imageUrl: null };
 }

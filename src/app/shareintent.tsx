@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { View, Text, ActivityIndicator, Pressable } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useShareIntentContext } from 'expo-share-intent';
-import { getArticleTitle } from '@/utils/getArticleTitle';
+import { getArticleDetails } from '@/utils/getArticleDetails';
 import { useArticleStore } from '@/store/useArticleStore';
 
 export default function ShareIntentScreen() {
@@ -14,14 +14,16 @@ export default function ShareIntentScreen() {
     const [loading, setLoading] = useState(true);
     const [title, setTitle] = useState<string | null>(null);
     const [url, setUrl] = useState<string | null>(null);
+    const [imageUrl, setImageUrl] = useState<string | null>(null);
 
     useEffect(() => {
         if (!shareIntent.webUrl) return;
         const sharedUrl = shareIntent.webUrl;
         async function fetchDetails() {
-            const fetchedTitle = await getArticleTitle(sharedUrl);
+            const fetchedTitle = await getArticleDetails(sharedUrl);
             setTitle(fetchedTitle.title || fetchedTitle.url);
             setUrl(fetchedTitle.url);
+            setImageUrl(fetchedTitle.imageUrl);
             setLoading(false);
         }
         fetchDetails();
@@ -34,7 +36,7 @@ export default function ShareIntentScreen() {
 
     function handleAdd() {
         if (!title || !url) return;
-        addArticle({ title, url });
+        addArticle({ title, url, imageUrl });
         goHome();
     }
 
