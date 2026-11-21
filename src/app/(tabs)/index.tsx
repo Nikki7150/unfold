@@ -5,6 +5,7 @@ import { isSameDay } from 'date-fns';
 import { useArticleStore } from '@/store/useArticleStore';
 import { getTodaysPick, pickArticle } from '@/utils/pickArticle';
 import { useOpenArticle } from '@/hooks/useOpenArticle';
+import { getStreak } from '@/utils/streak';
 
 export default function HomeScreen() {
   const setPicked = useArticleStore((s) => s.setPicked);
@@ -47,9 +48,13 @@ export default function HomeScreen() {
       </Pressable>
     );
   }
+
+  const streak = getStreak(articles);
+
   return (
     <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', padding: 20 }}>
       {content}
+      <Text>{streak}-day streak. You're on Fire!</Text>
     </View>
   );
 }
