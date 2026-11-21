@@ -36,6 +36,7 @@ export default function ShareIntentScreen() {
 
     function handleAdd() {
         if (!title || !url) return;
+        console.log("IMAGE:", imageUrl);
         addArticle({ title, url, imageUrl });
         goHome();
     }
