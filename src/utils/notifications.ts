@@ -30,8 +30,8 @@ export async function scheduleDailyReminder(
     title = 'Daily Reminder',
     body = "Don't forget to get your daily substack read in.",
 ): Promise<string> {
-    await Notifications.cancelAllScheduledNotificationsAsync();
     return await Notifications.scheduleNotificationAsync({
+        identifier: 'daily-reminder',
         content: {
             title, 
             body, 

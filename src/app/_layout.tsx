@@ -6,6 +6,7 @@ import { ShareIntentProvider } from 'expo-share-intent';
 import { AnimatedSplashOverlay } from '@/components/animated-icon';
 import { useEffect } from 'react';
 import { requestNotificationPermission, scheduleDailyReminder } from '@/utils/notifications';
+import { useSettingsStore } from '@/store/useSettingsStore';
 
 SplashScreen.preventAutoHideAsync();
 
@@ -13,14 +14,16 @@ export const unstable_settings = { anchor: '(tabs)' };
 
 export default function RootLayout() {
   const colorScheme = useColorScheme();
+  const reminderHour = useSettingsStore((s) => s.reminderHour);
+  const reminderMinute = useSettingsStore((s) => s.reminderMinute);
   useEffect(() => {
     const setupNotifications = async () => {
       if (await requestNotificationPermission()) {
-        await scheduleDailyReminder(20, 42);
+        await scheduleDailyReminder(reminderHour, reminderMinute);
       }
     };
     void setupNotifications();
-  }, []);
+  }, [reminderHour, reminderMinute]);
 
   return (
     <ShareIntentProvider>
