@@ -6,6 +6,8 @@ import { Article } from '@/types/article';
 
 import { MaxContentWidth, Spacing } from '@/constants/theme';
 import { useOpenArticle } from '@/hooks/useOpenArticle';
+import { ArticleCard } from '@/components/article-card';
+import { ThemedText } from '@/components/themed-text';
 
 export default function LibraryScreen() {
   const articles = useArticleStore((s) => s.articles);
@@ -18,24 +20,27 @@ export default function LibraryScreen() {
 
   return (
     <View style={{ flex: 1, paddingTop: 60 }}>
+      <ThemedText type='title'>Library</ThemedText>
       <FlatList
         data={sortedArticles}
         keyExtractor={(item) => item.id}
-        renderItem={({ item }) => (
-          <Pressable onPress={() => openArticle(item)}>
-            <View style={{ padding: 16 }}>
-              <Text style={{ fontSize: 16, fontWeight: '600' }}>{item.title}</Text>
-              <Text style={{ color: '#666', marginTop: 4 }}>
-                Added {formatDistanceToNow(new Date(item.dateAdded), { addSuffix: true })}
-              </Text>
-              {item.dateRead && (
-                <Text>Read</Text>
-              )}
-              {item.note && (
-                <Text>{item.note}</Text>
-              )}
-            </View>
-          </Pressable>
+        contentContainerStyle={{ paddingTop: 80, paddingHorizontal: 16, paddingBottom: 120 }}
+        renderItem={({ item, index }) => (
+          // <Pressable onPress={() => openArticle(item)}>
+          //   <View style={{ padding: 16 }}>
+          //     <Text style={{ fontSize: 16, fontWeight: '600' }}>{item.title}</Text>
+          //     <Text style={{ color: '#666', marginTop: 4 }}>
+          //       Added {formatDistanceToNow(new Date(item.dateAdded), { addSuffix: true })}
+          //     </Text>
+          //     {item.dateRead && (
+          //       <Text>Read</Text>
+          //     )}
+          //     {item.note && (
+          //       <Text>{item.note}</Text>
+          //     )}
+          //   </View>
+          // </Pressable>
+          <ArticleCard article={item} index={index} onPress={() => openArticle(item)} />
         )}
         ListEmptyComponent={
           <Text>Nothing saved yet. Share some Substack articles!</Text>
