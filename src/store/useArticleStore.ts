@@ -7,6 +7,7 @@ import { Article } from '@/types/article';
 type ArticleState = {
     articles: Article[];
     addArticle: (input: { title: string; url: string; imageUrl: string | null }) => Article | null;
+    deleteArticle: (id: string) => void;
     hasUrl: (url: string) => boolean;
     markAsRead: (id: string, note?: string) => void;
     setPicked: (id: string) => void;
@@ -59,6 +60,11 @@ export const useArticleStore = create<ArticleState>()(
                         : article
                     ),
                 })),
+            deleteArticle: (id: string) => {
+                set((state) => ({
+                    articles: state.articles.filter((article) => article.id !== id),
+                }));
+            },
         }),
         {
             name: 'unfold-articles',

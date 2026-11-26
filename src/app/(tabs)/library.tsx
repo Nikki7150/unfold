@@ -12,11 +12,33 @@ import { ThemedText } from '@/components/themed-text';
 export default function LibraryScreen() {
   const articles = useArticleStore((s) => s.articles);
   const markAsRead = useArticleStore((s) => s.markAsRead);
+  const deleteArticle = useArticleStore((s) => s.deleteArticle);
   const openArticle = useOpenArticle();
 
   const sortedArticles = [...articles].sort((a, b) => 
     b.dateAdded.localeCompare(a.dateAdded)
   );
+
+  function confirmDelete(article: Article) {
+    if (article.dateRead) {
+      Alert.alert(
+        "Can't remove read articles.",
+        'Read articles stay in your history so your streak and stats stay accurate.',
+      );
+      return;
+    }
+    Alert.alert('Remove this article?', article.title, [
+      {
+        text: 'Cancel',
+        style: 'cancel',
+      },
+      {
+        text: 'Remove',
+        style: 'destructive',
+        onPress: () => deleteArticle(article.id),
+      },
+    ]);
+  }
 
   return (
     <View style={{ flex: 1, paddingTop: 60 }}>
@@ -40,7 +62,7 @@ export default function LibraryScreen() {
           //     )}
           //   </View>
           // </Pressable>
-          <ArticleCard article={item} index={index} onPress={() => openArticle(item)} />
+          <ArticleCard article={item} index={index} onPress={() => openArticle(item)} onLongPress={() => confirmDelete(item)} />
         )}
         ListEmptyComponent={
           <Text>Nothing saved yet. Share some Substack articles!</Text>

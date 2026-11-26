@@ -5,13 +5,14 @@ type ArticleCardProps = {
     article: Article;
     index: number;
     onPress: () => void;
+    onLongPress: () => void;
 };
 
-export function ArticleCard({ article, index, onPress }: ArticleCardProps) {
+export function ArticleCard({ article, index, onPress, onLongPress }: ArticleCardProps) {
     const unread = !article.dateRead;
 
     return (
-        <Pressable onPress={onPress} style={styles.wrapper}>
+        <Pressable onPress={onPress} onLongPress={onLongPress} style={styles.wrapper}>
             {unread &&
                 <View style={styles.paper} />
             }
